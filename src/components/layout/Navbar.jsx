@@ -43,7 +43,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between h-16">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
-          <img src={Logo} alt="BarberCut Pro" className="h-8 w-auto" />
+          <img src={"https://res.cloudinary.com/dmhyzqdp9/image/upload/v1744490361/Gemini_Generated_Image_ezsmgrezsmgrezsm_vxtpif.jpg"} alt="BarberCut Pro" className="h-8 w-auto" />
           <span className="font-heading font-bold text-xl">BarberCut</span>
         </Link>
 

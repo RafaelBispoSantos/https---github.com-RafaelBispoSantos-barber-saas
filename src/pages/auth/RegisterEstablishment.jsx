@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
-import Logo from "@/assets/images/logo.svg";
+
 
 // Validation schema
 const establishmentSchema = z.object({
@@ -126,7 +126,7 @@ export default function RegisterEstablishment() {
           <div className="bg-card rounded-xl shadow-lg border p-6 md:p-8">
             <div className="flex flex-col items-center mb-6">
               <div className="flex items-center space-x-2">
-                <img src={Logo} alt="BarberCut Pro" className="h-10" />
+                <img src={"https://res.cloudinary.com/dmhyzqdp9/image/upload/v1744490361/Gemini_Generated_Image_ezsmgrezsmgrezsm_vxtpif.jpg"} alt="BarberCut Pro" className="h-10" />
                 <Scissors className="h-6 w-6 text-primary" />
               </div>
               <h1 className="font-heading text-2xl font-bold mt-2">

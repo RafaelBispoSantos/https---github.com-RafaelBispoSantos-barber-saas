@@ -1,10 +1,13 @@
+import React from "react";
 import AppRouter from "./router/AppRouter";
-import { ToastProvider } from "./components/ui/use-toast"; 
+import { ToastProvider } from "./components/ui/use-toast";
+
 export default function App() {
   return (
-    <>
-      <AppRouter />
-      <ToastProvider />
-    </>
+    <React.StrictMode>
+      <ToastProvider>
+        <AppRouter />
+      </ToastProvider>
+    </React.StrictMode>
   );
 }

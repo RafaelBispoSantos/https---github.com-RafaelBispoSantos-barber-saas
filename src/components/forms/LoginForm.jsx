@@ -24,6 +24,7 @@ export default function LoginForm({ estabelecimentoUrl = "" }) {
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading, error } = useAuth();
   const navigate = useNavigate();
+  const [submitError, setSubmitError] = useState(null);
 
   const {
     register,
@@ -34,22 +35,38 @@ export default function LoginForm({ estabelecimentoUrl = "" }) {
     defaultValues: {
       email: "",
       password: "",
-      estabelecimentoUrl,
+      estabelecimentoUrl: estabelecimentoUrl || "",
     },
   });
 
   const onSubmit = async (data) => {
-    const success = await login(data);
-    if (success) {
-      // Redirect based on user type
-      if (success.user.tipo === "proprietario") {
-        navigate("/dashboard");
-      } else if (success.user.tipo === "barbeiro") {
-        navigate("/barber/schedule");
+    try {
+      setSubmitError(null);
+      const result = await login(data);
+      
+      if (result.success) {
+        // Redirect based on user type
+        if (result.user.tipo === "proprietario") {
+          navigate("/dashboard");
+        } else if (result.user.tipo === "barbeiro") {
+          navigate("/barber/schedule");
+        } else {
+          navigate("/");
+        }
       } else {
-        navigate("/");
+        setSubmitError(result.error || "Falha ao fazer login");
       }
+    } catch (err) {
+      console.error("Erro ao fazer login:", err);
+      setSubmitError("Ocorreu um erro durante o login. Por favor, tente novamente.");
     }
+  };
+
+  const handlePasswordToggle = (e) => {
+    // Impede que o clique no botão de mostrar senha propague para o formulário
+    e.preventDefault();
+    e.stopPropagation();
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -93,7 +110,7 @@ export default function LoginForm({ estabelecimentoUrl = "" }) {
           <button
             type="button"
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            onClick={() => setShowPassword(!showPassword)}
+            onClick={handlePasswordToggle}
           >
             {showPassword ? (
               <EyeOff className="h-4 w-4" />
@@ -111,11 +128,12 @@ export default function LoginForm({ estabelecimentoUrl = "" }) {
       <Input
         type="hidden"
         {...register("estabelecimentoUrl")}
+        value={estabelecimentoUrl || ""}
       />
 
-      {error && (
+      {(error || submitError) && (
         <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
-          {error}
+          {error || submitError}
         </div>
       )}
 
@@ -124,6 +142,7 @@ export default function LoginForm({ estabelecimentoUrl = "" }) {
         variant="barbershop"
         className="w-full"
         disabled={isLoading}
+        onClick={() => console.log("Button clicked")} // Debug para verificar cliques
       >
         {isLoading ? (
           <>

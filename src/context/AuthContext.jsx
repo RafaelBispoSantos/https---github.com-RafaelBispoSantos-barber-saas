@@ -9,16 +9,22 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [establishment, setEstablishment] = useState(null);
 
   // Inicializa o contexto de autenticação verificando o localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("barbercut_user");
     const storedToken = localStorage.getItem("barbercut_token");
+    const storedEstablishment = localStorage.getItem("barbercut_establishment");
 
     if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
       setToken(storedToken);
       api.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+      
+      if (storedEstablishment) {
+        setEstablishment(JSON.parse(storedEstablishment));
+      }
     }
 
     setLoading(false);
@@ -35,6 +41,17 @@ export function AuthProvider({ children }) {
       
       localStorage.setItem("barbercut_token", token);
       localStorage.setItem("barbercut_user", JSON.stringify(user));
+      
+      // Se o usuário for proprietário, buscar informações do estabelecimento
+      if (user.tipo === 'proprietario' && user.estabelecimento) {
+        try {
+          const estResponse = await api.get(`/api/estabelecimentos/${user.estabelecimento}`);
+          localStorage.setItem("barbercut_establishment", JSON.stringify(estResponse.data.data));
+          setEstablishment(estResponse.data.data);
+        } catch (estError) {
+          console.error("Erro ao buscar estabelecimento:", estError);
+        }
+      }
       
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       
@@ -95,6 +112,7 @@ export function AuthProvider({ children }) {
       
       setUser(user);
       setToken(token);
+      setEstablishment(estabelecimento);
       setIsLoading(false);
       
       return { success: true, user, establishment: estabelecimento };
@@ -103,6 +121,19 @@ export function AuthProvider({ children }) {
       setError(errorMessage);
       setIsLoading(false);
       return { success: false, error: errorMessage };
+    }
+  };
+
+  // Verificar se o token é válido
+  const verifyToken = async () => {
+    if (!token) return false;
+    
+    try {
+      const response = await api.get("/api/auth/verify-token");
+      return response.data.user ? true : false;
+    } catch (err) {
+      logout();
+      return false;
     }
   };
 
@@ -115,6 +146,7 @@ export function AuthProvider({ children }) {
     
     setUser(null);
     setToken(null);
+    setEstablishment(null);
   };
 
   const updateProfile = async (userData) => {
@@ -145,7 +177,7 @@ export function AuthProvider({ children }) {
     setError(null);
     
     try {
-      await api.patch(`/api/usuarios/alterar-senha`, passwordData);
+      await api.patch("/api/usuarios/alterar-senha", passwordData);
       
       setIsLoading(false);
       
@@ -158,11 +190,33 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Obter estabelecimento por URL
+  const getEstablishmentByUrl = async (url) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await api.get(`/api/estabelecimentos`, {
+        params: { url }
+      });
+      
+      setIsLoading(false);
+      
+      return { success: true, establishment: response.data.data };
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || "Erro ao buscar estabelecimento";
+      setError(errorMessage);
+      setIsLoading(false);
+      return { success: false, error: errorMessage };
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
         token,
+        establishment,
         isLoading,
         loading,
         error,
@@ -172,6 +226,8 @@ export function AuthProvider({ children }) {
         logout,
         updateProfile,
         changePassword,
+        verifyToken,
+        getEstablishmentByUrl,
         isAuthenticated: !!user,
       }}
     >

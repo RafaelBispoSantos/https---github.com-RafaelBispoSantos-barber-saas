@@ -20,7 +20,7 @@ export default function Footer() {
           {/* Logo and About */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <img src={Logo} alt="BarberCut Pro" className="h-10 w-auto" />
+              <img src={"https://res.cloudinary.com/dmhyzqdp9/image/upload/v1744490361/Gemini_Generated_Image_ezsmgrezsmgrezsm_vxtpif.jpg"} alt="BarberCut Pro" className="h-10 w-auto" />
               <span className="font-heading font-bold text-xl">BarberCut</span>
             </div>
             <p className="text-sm text-muted-foreground">

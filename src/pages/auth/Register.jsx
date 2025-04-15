@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import RegisterForm from "@/components/forms/RegisterForm";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import Logo from "@/assets/images/logo.svg";
+
 
 export default function Register() {
   const { isAuthenticated } = useAuth();
@@ -44,7 +44,7 @@ export default function Register() {
         <div className="w-full max-w-md">
           <div className="bg-card rounded-xl shadow-lg border p-6 md:p-8">
             <div className="flex flex-col items-center mb-6">
-              <img src={Logo} alt="BarberCut Pro" className="h-12 mb-2" />
+              <img src={"https://res.cloudinary.com/dmhyzqdp9/image/upload/v1744490361/Gemini_Generated_Image_ezsmgrezsmgrezsm_vxtpif.jpg"} alt="BarberCut Pro" className="h-12 mb-2" />
               <h1 className="font-heading text-2xl font-bold">
                 Crie sua conta
               </h1>
